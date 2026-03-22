@@ -65,10 +65,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int[] tamaños = {10, 100, 10000, 100000, 1000000, 100000000};
-
+        int[] tamaños = {10, 100, 10000, 1000000, 100000000};
         for (int n : tamaños) {
             Medir(n);
         }
     }
 }
+
