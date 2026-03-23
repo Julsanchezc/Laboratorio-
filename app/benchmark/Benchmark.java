@@ -2,6 +2,16 @@ package app.benchmark;
 
 public class Benchmark {
 
+    private static final int WARMUP_ITERATIONS = 20_000;
+
+    /**
+     * Runs task WARMUP_ITERATIONS times to trigger JIT compilation
+     * before any timed measurement.
+     */
+    public static void warmup(Runnable task) {
+        for (int i = 0; i < WARMUP_ITERATIONS; i++) task.run();
+    }
+
     // ── Raw timing ────────────────────────────────────────────────────────────
 
     public static long measure(Runnable task) {

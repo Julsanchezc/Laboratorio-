@@ -22,6 +22,9 @@ public class StackBenchmark {
     private static void runFor(int size, int repetitions, Random rand) {
         ArrayStack<Integer> stack = new ArrayStack<>();
 
+        // Warm up JIT before any measurement
+        Benchmark.warmup(() -> { stack.push(0); stack.pop(); });
+
         // push — average per operation
         long totalPush = Benchmark.measure(() -> {
             for (int i = 0; i < size; i++) stack.push(rand.nextInt(1_000_000));
@@ -35,7 +38,10 @@ public class StackBenchmark {
         Benchmark.trackAverage(NAME, "isEmpty", size, () -> sink ^= (stack.isEmpty() ? 1 : 0), repetitions);
 
         int target = stack.peek();
-        Benchmark.track(NAME, "delete", size, () -> stack.delete(target));
+        Benchmark.trackAverage(NAME, "delete", size, () -> {
+            stack.push(target);
+            stack.delete(target);
+        }, repetitions);
 
         // pop — keep stack size stable during the average measurement
         Benchmark.trackAverage(NAME, "pop", size, () -> {

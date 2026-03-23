@@ -30,6 +30,10 @@ public class ListBenchmark {
         // so the reported value is average nanoseconds per operation, comparable
         // with all other single-operation measurements.
 
+        // Warm up JIT before any measurement
+        IList warmupList = factory.get();
+        Benchmark.warmup(() -> { warmupList.pushFront(rand.nextDouble()); warmupList.popFront(); });
+
         IList l1 = factory.get();
         long totalPF = Benchmark.measure(() -> {
             for (int i = 0; i < size; i++) l1.pushFront(rand.nextDouble());
@@ -77,7 +81,7 @@ public class ListBenchmark {
     }
 
     private static IList populate(IList list, int size, Random rand) {
-        for (int i = 0; i < size; i++) list.pushBack(rand.nextDouble());
+        for (int i = 0; i < size; i++) list.pushFront(rand.nextDouble());
         return list;
     }
 }

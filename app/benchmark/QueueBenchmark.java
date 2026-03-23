@@ -22,6 +22,9 @@ public class QueueBenchmark {
     private static void runFor(int size, int repetitions, Random rand) {
         ArrayQueue<Integer> queue = new ArrayQueue<>();
 
+        // Warm up JIT before any measurement
+        Benchmark.warmup(() -> { queue.enqueue(0); queue.dequeue(); });
+
         // enqueue — average per operation
         long totalEnq = Benchmark.measure(() -> {
             for (int i = 0; i < size; i++) queue.enqueue(rand.nextInt(1_000_000));
@@ -35,7 +38,10 @@ public class QueueBenchmark {
         Benchmark.trackAverage(NAME, "isEmpty", size, () -> sink ^= (queue.isEmpty() ? 1 : 0), repetitions);
 
         int target = (Integer) queue.front();
-        Benchmark.track(NAME, "delete", size, () -> queue.delete(target));
+        Benchmark.trackAverage(NAME, "delete", size, () -> {
+            queue.enqueue(target);
+            queue.delete(target);
+        }, repetitions);
 
         // dequeue — keep queue size stable during the average measurement
         Benchmark.trackAverage(NAME, "dequeue", size, () -> {

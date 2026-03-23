@@ -31,9 +31,6 @@ target/
 # Logs generados en runtime
 logs/
 
-# Resultados del benchmark (generados, no versionables)
-results/
-
 # Python
 __pycache__/
 *.pyc

@@ -89,7 +89,7 @@ ok "Compilación exitosa"
 
 # ── 5. Java: ejecutar benchmark ───────────────────────────────────────────────
 step "Ejecutando benchmark Java..."
-java -cp "$OUT" app.benchmark.Main
+java -Xint -cp "$OUT" app.benchmark.Main
 ok "Benchmark completado → results/benchmark_results.csv"
 
 # ── 6. Python: graficación ────────────────────────────────────────────────────
