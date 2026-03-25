@@ -39,7 +39,16 @@ Taller de estructuras de datos lineales: implementación, benchmark de rendimien
 | Python | 3.9 |
 | Git Bash (Windows) | cualquiera |
 
-> En Linux/Mac funciona sin cambios. En Windows se requiere Git Bash para ejecutar `start.sh`.
+> En Windows se requiere Git Bash para ejecutar `start.sh`.  
+> En Linux/Mac, si la compilación falla, reemplaza el bloque de compilación en `start.sh` por:
+> ```bash
+> echo "Compilando Java..."
+> OUT="$ROOT/out/classes"
+> mkdir -p "$OUT"
+> find "$ROOT/app" -name "*.java" > "$ROOT/out/sources.txt"
+> javac -encoding UTF-8 -d "$OUT" @"$ROOT/out/sources.txt"
+> echo "Compilación exitosa"
+> ```
 
 ---
 
