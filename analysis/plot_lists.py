@@ -87,7 +87,7 @@ def apply_scale(ax, yscale, ylabel_suffix):
     if yscale == "linear":
         ax.set_ylim(bottom=0)
     ax.set_xlabel("Tamaño de la lista (n)", fontsize=12)
-    ax.set_ylabel(f"Promedio Microsegundos [µs]{ylabel_suffix}", fontsize=11)
+    ax.set_ylabel(f"Tiempo por operación [µs]{ylabel_suffix}", fontsize=11)
     ax.xaxis.set_major_formatter(
         ticker.FuncFormatter(lambda x, _: f"10^{int(round(math.log10(x)))}" if x > 0 else "0"))
 
@@ -148,7 +148,7 @@ def main():
                         label=NICE_NAMES.get(impl, impl))
 
             apply_scale(ax, yscale, suffix)
-            ax.set_ylabel(f"Microsegundos [µs]{suffix}", fontsize=11)
+            ax.set_ylabel(f"Tiempo por operación [µs]{suffix}", fontsize=11)
             ax.set_title(f"Comparativa de implementaciones — {op}", fontsize=13, fontweight="bold")
             ax.legend(fontsize=8)
             ax.grid(True, which="both", linestyle="--", alpha=0.4)

@@ -111,7 +111,7 @@ def main():
             if yscale == "linear":
                 ax.set_ylim(bottom=0)
             ax.set_xlabel("Tamaño de entrada (n)", fontsize=12)
-            ax.set_ylabel(f"Microsegundos [µs]{suffix}", fontsize=11)
+            ax.set_ylabel(f"Tiempo por operación [µs]{suffix}", fontsize=11)
             ax.set_title(title, fontsize=12, fontweight="bold")
             ax.legend(fontsize=9)
             ax.grid(True, which="both", linestyle="--", alpha=0.4)

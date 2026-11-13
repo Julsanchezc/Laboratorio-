@@ -1,5 +1,7 @@
 package app.datastructures.queue;
 
+import java.util.Objects;
+
 /**
  * Queue implemented with a circular dynamic array.
  *
@@ -78,7 +80,7 @@ public class ArrayQueue<T> implements IQueue<T> {
     public void delete(T element) {
         for (int i = 0; i < count; i++) {
             int idx = (head + i) % elements.length;
-            if (elements[idx].equals(element)) {
+            if (Objects.equals(elements[idx], element)) {
                 // Shift every subsequent element one position forward
                 for (int j = i; j < count - 1; j++) {
                     int curr = (head + j)     % elements.length;

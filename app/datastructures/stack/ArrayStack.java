@@ -1,5 +1,7 @@
 package app.datastructures.stack;
 
+import java.util.Objects;
+
 /**
  * Array-based generic stack with dynamic resizing.
  * push O(1) amortized | pop O(1) | peek O(1) | size O(1)
@@ -52,7 +54,7 @@ public class ArrayStack<T> implements IStack<T> {
     @Override
     public void delete(T element) {
         for (int i = 0; i < count; i++) {
-            if (elements[i].equals(element)) {
+            if (Objects.equals(elements[i], element)) {
                 System.arraycopy(elements, i + 1, elements, i, count - i - 1);
                 elements[--count] = null;
                 return;

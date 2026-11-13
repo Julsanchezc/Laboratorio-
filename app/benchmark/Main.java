@@ -9,16 +9,18 @@ import java.util.Arrays;
 public class Main {
 
     private static final String CSV_PATH = "results/benchmark_results.csv";
+    private static final String DEFAULT_SIZES = "10,100,1000,10000,100000,1000000";
 
     public static void main(String[] args) {
         AppConfig config = AppConfig.getInstance();
         AppLogger  logger = AppLogger.getInstance();
 
-        int[] sizes       = parseSizes(config.get("BENCHMARK_SIZES", "10,100,10000,1000000,100000000"));
-        int   repetitions = config.getInt("BENCHMARK_REPETITIONS", 100);
+        // Defaults are safe for any machine (~1 min). Larger sizes can be set in .env.
+        int[] sizes       = parseSizes(config.get("BENCHMARK_SIZES", DEFAULT_SIZES));
+        int   samples     = Math.max(1, config.getInt("BENCHMARK_SAMPLES", 15));
 
         logger.info("Benchmark starting — sizes: " + Arrays.toString(sizes)
-                    + ", repetitions: " + repetitions);
+                    + ", samples: " + samples);
 
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║      DATA STRUCTURES BENCHMARK       ║");
@@ -26,13 +28,13 @@ public class Main {
 
         // ── Timing (nothing else runs inside these calls) ─────────────────────
         System.out.println("\n\n━━━  LINKED LISTS  ━━━");
-        ListBenchmark.run(sizes, repetitions);
+        ListBenchmark.run(sizes, samples);
 
         System.out.println("\n\n━━━  STACK  ━━━");
-        StackBenchmark.run(sizes, repetitions);
+        StackBenchmark.run(sizes, samples);
 
         System.out.println("\n\n━━━  QUEUE  ━━━");
-        QueueBenchmark.run(sizes, repetitions);
+        QueueBenchmark.run(sizes, samples);
 
         // ── CSV export (after all timing is done) ─────────────────────────────
         try {

@@ -26,7 +26,7 @@ SCALES = [
 
 STRUCTURES = {
     "ArrayStack": {
-        "title": "ArrayStack (Arreglo Dinámico Circular)",
+        "title": "ArrayStack (Arreglo Dinámico)",
         "ops":   ["push", "peek", "pop", "delete", "size", "isEmpty"],
     },
     "ArrayQueue": {
@@ -46,7 +46,7 @@ def apply_scale(ax, yscale, ylabel_suffix):
     if yscale == "linear":
         ax.set_ylim(bottom=0)
     ax.set_xlabel("Tamaño de entrada (n)", fontsize=12)
-    ax.set_ylabel(f"Promedio Microsegundos [µs]{ylabel_suffix}", fontsize=11)
+    ax.set_ylabel(f"Tiempo por operación [µs]{ylabel_suffix}", fontsize=11)
 
 
 def main():

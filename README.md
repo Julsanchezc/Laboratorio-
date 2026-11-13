@@ -18,7 +18,7 @@ Laboratorio de **Estructuras de Datos · Universidad Nacional de Colombia · 202
 ## ✨ Lo más destacado
 
 - 🔗 **6 implementaciones**: lista simple y doble, cada una con y sin puntero a la cola, `ArrayStack` y `ArrayQueue` (arreglo circular dinámico).
-- ⏱️ **Benchmark reproducible**: semilla fija, tiempos promedio por repetición y medición separada de la escritura a disco.
+- ⏱️ **Medición cuidadosa**: calentamiento del JIT, cada operación medida aislada sobre una estructura de tamaño exacto N, mediana de 15 muestras y semilla fija.
 - 📊 **Más de 20 gráficas** en escala log-log generadas automáticamente con pandas y matplotlib.
 - 🚀 **Un solo comando** (`start.sh`) compila Java, corre el benchmark, crea el entorno de Python y genera las gráficas.
 
@@ -36,8 +36,10 @@ Laboratorio de **Estructuras de Datos · Universidad Nacional de Colombia · 202
 |---|:---:|:---:|:---:|:---:|:---:|
 | `SinglyLinkedList` | O(1) | O(n) | O(1) | O(n) | O(n) |
 | `SinglyLinkedListWithTail` | O(1) | O(1) | O(1) | O(n) | O(n) |
-| `DoublyLinkedList` | O(1) | O(n) | O(1) | O(1) | O(n) |
+| `DoublyLinkedList` | O(1) | O(n) | O(1) | O(n)† | O(n) |
 | `DoublyLinkedListWithTail` | O(1) | O(1) | O(1) | O(1) | O(n) |
+
+† Aunque cada nodo conoce a su anterior, sin puntero a la cola hay que recorrer toda la lista para llegar al último nodo. El puntero `prev` solo hace O(1) el `popBack` cuando además existe `tail`.
 
 ### Pila — `IStack<T>`
 
@@ -95,7 +97,7 @@ bash start.sh
 2. Instala `matplotlib` y `pandas` en el venv
 3. Compila todos los `.java` de `app/`
 4. Ejecuta el benchmark → genera `results/benchmark_results.csv`
-5. Genera 15 gráficos PNG → `results/graphs/`
+5. Genera 20 gráficos PNG (escala lineal y logarítmica) → `results/graphs/`
 
 ---
 
@@ -104,18 +106,35 @@ bash start.sh
 Edita `.env` (nunca se sube al repositorio):
 
 ```env
-# Tamaños de entrada para el benchmark (separados por coma, sin espacios)
-BENCHMARK_SIZES=10,100,10000,1000000
+# Tamaños de entrada (separados por coma, sin espacios)
+BENCHMARK_SIZES=10,100,1000,10000,100000,1000000
 
-# Repeticiones para calcular tiempos promedio
-BENCHMARK_REPETITIONS=100
+# Muestras por operación (se reporta la mediana)
+BENCHMARK_SAMPLES=15
 
 # Nivel de log: INFO | WARNING | FINE | SEVERE
 LOG_LEVEL=INFO
 ```
 
-> Para tamaños de 100,000,000 el benchmark puede tardar horas con operaciones O(n).
-> Se recomienda `BENCHMARK_SIZES=10,100,10000,1000000` para un tiempo razonable (~2 min).
+> Con los valores por defecto el benchmark tarda alrededor de un minuto. Los resultados publicados en `results/` se generaron agregando `10000000` (10⁷), que tarda varios minutos y necesita unos 2 GB de RAM. No se recomienda 10⁸: no cabe en la memoria de un equipo normal.
+
+---
+
+## Metodología de medición
+
+Medir operaciones de nanosegundos en Java tiene varias trampas. El benchmark las evita así:
+
+| Problema | Solución |
+|---|---|
+| El JIT compila el código mientras corre, así que las primeras mediciones salen infladas | Cada benchmark hace primero una **pasada de calentamiento** completa que no se registra |
+| El resultado de una operación depende del tamaño de la estructura | Cada operación se mide sobre una estructura con **exactamente N** elementos; después de cada medición, un paso **no cronometrado** la devuelve a tamaño N (por ejemplo, `pushFront` se deshace con `popFront`) |
+| Picos ocasionales del recolector de basura o del sistema operativo | Cada operación se mide 15 veces y se reporta la **mediana** |
+| `System.nanoTime()` tiene resolución limitada (100 ns en muchos equipos con Windows) y una operación O(1) tarda ~10 ns | Si una sola llamada es demasiado rápida para medirla, se ejecuta una vez sobre cada una de varias **copias idénticas** de la estructura (o varias veces seguidas cambiando el tamaño menos de 0,1 %) y se divide el tiempo total |
+| Medir el mejor caso en lugar del peor | `find`, `erase`, `addBefore` y `addAfter` buscan un valor que está **al final** de la lista; `delete` de la pila elimina el elemento del **fondo** (hay que desplazar todos los demás) y el de la cola elimina el del **final** (hay que recorrerla entera) |
+
+`push` y `enqueue` se reportan como **costo amortizado**: el tiempo de llenar la estructura con N elementos dividido entre N, que incluye las veces que el arreglo interno se duplica.
+
+> Los tiempos absolutos de las operaciones O(1) (~10–50 ns) incluyen el costo fijo del arnés de medición. Lo importante es **cómo crece** el tiempo con N: las operaciones O(1) se mantienen planas y las O(n) crecen en proporción a N.
 
 ---
 
@@ -180,9 +199,9 @@ Laboratorio-/
 │
 ├── logs/                          ← generado en runtime (gitignored)
 │   └── logs.log                   ← se sobreescribe en cada ejecución
-├── results/                       ← generado en runtime (gitignored)
+├── results/                       ← resultados publicados (se regeneran al ejecutar)
 │   ├── benchmark_results.csv      ← se sobreescribe en cada ejecución
-│   └── graphs/                    ← 15 PNG generados por los scripts Python
+│   └── graphs/                    ← 20 PNG (en el repo se publican los de escala logarítmica)
 └── out/                           ← clases Java compiladas (gitignored)
 ```
 
@@ -197,8 +216,8 @@ Laboratorio-/
 | `structure` | Nombre de la estructura (`SinglyLinkedList`, `ArrayStack`, etc.) |
 | `operation` | Operación medida (`pushFront`, `enqueue`, `find`, etc.) |
 | `size` | Tamaño de entrada `n` |
-| `time_ns` | Tiempo promedio en nanosegundos |
-| `time_us` | Tiempo promedio en microsegundos |
+| `time_ns` | Tiempo por operación en nanosegundos (mediana, o costo amortizado en `push`/`enqueue`) |
+| `time_us` | El mismo valor en microsegundos |
 
 ### Gráficos — `results/graphs/`
 
