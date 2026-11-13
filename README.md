@@ -1,6 +1,30 @@
-# Laboratorio — Estructuras de Datos 2026-I (UNAL)
+<p align="center">
+  <img src="docs/assets/banner.png" alt="Benchmark de Estructuras de Datos Lineales" width="100%">
+</p>
 
-Taller de estructuras de datos lineales: implementación, benchmark de rendimiento y análisis gráfico comparativo.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java">
+  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/pandas-matplotlib-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="pandas">
+  <img src="https://img.shields.io/badge/UNAL-Estructuras%20de%20Datos-0F766E?style=for-the-badge" alt="UNAL">
+</p>
+
+# 📈 Laboratorio: Benchmark de Estructuras de Datos Lineales
+
+Implementación desde cero en **Java** de listas enlazadas, pila y cola, con un **benchmark automatizado** que mide cada operación con entradas de hasta **10⁷ elementos** y un pipeline en **Python** que genera las gráficas comparativas. El objetivo: comprobar en la práctica que la complejidad teórica (Big-O) se cumple.
+
+Laboratorio de **Estructuras de Datos · Universidad Nacional de Colombia · 2026-I**.
+
+## ✨ Lo más destacado
+
+- 🔗 **6 implementaciones**: lista simple y doble, cada una con y sin puntero a la cola, `ArrayStack` y `ArrayQueue` (arreglo circular dinámico).
+- ⏱️ **Benchmark reproducible**: semilla fija, tiempos promedio por repetición y medición separada de la escritura a disco.
+- 📊 **Más de 20 gráficas** en escala log-log generadas automáticamente con pandas y matplotlib.
+- 🚀 **Un solo comando** (`start.sh`) compila Java, corre el benchmark, crea el entorno de Python y genera las gráficas.
+
+<p align="center">
+  <img src="results/graphs/comparison_05.png" alt="Comparativa de eliminación por valor" width="85%">
+</p>
 
 ---
 
@@ -56,7 +80,7 @@ Taller de estructuras de datos lineales: implementación, benchmark de rendimien
 
 ```bash
 # 1. Clonar el repositorio
-git clone <url-del-repo>
+git clone https://github.com/Julsanchezc/Laboratorio-.git
 cd Laboratorio-
 
 # 2. Copiar la configuración
